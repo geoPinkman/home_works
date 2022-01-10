@@ -5,26 +5,23 @@ import org.jsoup.select.Elements;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        List<String> list = new ArrayList<>();
+        MetroLineList list = new MetroLineList();
         try {
             String htmlString = getHtml("data/MoscowMetro.html");
             Document document = Jsoup.parse(htmlString);
             System.out.println(document.title());
-            Elements stations = document.select("body > div.b-global-wrapper.s-metro-scheme > div.b-vd-metro-wrapper > div.b-vd-metro > div.b-metro-stations-by-lines.t-metro-section.js-metro-section");
-            Elements test = document.select("#metrodata");
-            for (Element qq : test) {
-                System.out.println(qq.toString());
+            for(var qq : document.select("#metrodata > div > div.js-toggle-depend > span")) {
+                String qqString = qq.toString();
+                String[] test = qqString.split(" ");
+                list.addData(new MetroLine(test[5].replaceAll("[^0-9]", ""), test[6]));
+                //String [] test = qqString.split(" ");
+                //System.out.println(qq.select("div.js-metro-stations").text());
+                //System.out.println(qq.select("div > div.js-depend > div"));
             }
-//            for(Element el : elements) {
-//                if (!el.select("#metrodata > div > div.js-depend.s-depend-active > div").text().isBlank()) {
-//                    System.out.println(el.select("#metrodata > div > div.js-depend.s-depend-active > div").text());
-//                }
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
