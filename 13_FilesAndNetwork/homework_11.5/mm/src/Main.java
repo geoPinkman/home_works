@@ -1,7 +1,5 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,9 +16,10 @@ public class Main {
                 String qqString = qq.toString();
                 String[] test = qqString.split(" ");
                 list.addData(new MetroLine(test[5].replaceAll("[^0-9]", ""), test[6]));
-                //String [] test = qqString.split(" ");
-                //System.out.println(qq.select("div.js-metro-stations").text());
-                //System.out.println(qq.select("div > div.js-depend > div"));
+            }
+            for(var qqs : document.select("#metrodata > div > div:nth-child(4) > div")){
+                String test = qqs.toString();
+                System.out.println(test);
             }
         } catch (Exception e) {
             e.printStackTrace();

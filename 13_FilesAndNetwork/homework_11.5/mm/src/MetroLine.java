@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class MetroLine {
     private String lineNumber;
     private String lineName;
@@ -26,5 +23,4 @@ public class MetroLine {
     public void setLineName(String lineName) {
         this.lineName = lineName;
     }
-
 }
