@@ -15,7 +15,4 @@ public class MetroLineList {
         return list;
     }
 
-    public void setList(List<MetroLine> list) {
-        this.list = list;
-    }
 }

@@ -9,7 +9,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         MetroLineList lineList = new MetroLineList();
-        List<String> stationsList = new ArrayList<>();
+        List<String> stList = new ArrayList<>();
+        MetroStationList stationList = new MetroStationList();
         try {
             String htmlString = getHtml("data/MoscowMetro.html");
             Document document = Jsoup.parse(htmlString);
@@ -19,7 +20,7 @@ public class Main {
                 lineList.addData(new MetroLine(test[5].replaceAll("[^0-9]", ""), test[6]));
             }
             for(var stations : document.select("#metrodata > div > div > div")){
-                stationsList.add(stations.text());
+                stList.add(stations.text());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -27,7 +28,22 @@ public class Main {
         List<MetroLine> test = lineList.getList();
         for (int i = 0; i < test.size(); i++) {
             System.out.println("Линия: " + test.get(i).getLineNumber() + " - "
-                    + test.get(i).getLineName() + " линия, Станции: " + stationsList.get(i));
+                    + test.get(i).getLineName() + " линия, Станции: " + stList.get(i));
+        }
+
+        for (int i = 0; i < stList.size(); i++) {
+            String[] qq = stList.get(i).split("[0-9]{1,2}\\.");
+            for (int j = 0; j < qq.length; j++) {
+                if (!qq[j].isEmpty()) {
+                    int lineNumber = i + 1;
+                    int stationNumber = j;
+                    stationList.addData(new MetroStation(lineNumber, stationNumber, qq[j].strip()));
+                }
+            }
+        }
+        List<MetroStation> ttt = stationList.getList();
+        for(MetroStation qq : ttt) {
+            System.out.println(qq.getLine() + " " + qq.getStationNumber() + " " + qq.getStationName());
         }
     }
     public static String getHtml(String path) {

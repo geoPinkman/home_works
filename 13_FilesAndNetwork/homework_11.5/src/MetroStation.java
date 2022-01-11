@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class MetroStation {
     private int line;
     private int stationNumber;
@@ -9,4 +12,15 @@ public class MetroStation {
         this.stationName = stationName;
     }
 
+    public int getLine() {
+        return line;
+    }
+
+    public int getStationNumber() {
+        return stationNumber;
+    }
+
+    public String getStationName() {
+        return stationName;
+    }
 }
