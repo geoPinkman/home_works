@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetroLine extends Metro {
+public class MetroLine{
     private String lineNumber;
     private String lineName;
 

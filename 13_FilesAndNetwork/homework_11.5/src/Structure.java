@@ -1,6 +1,7 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import javax.lang.model.util.Elements;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -85,4 +86,12 @@ public class Structure {
         return builder.toString();
     }
 
+    public static void main(String[] args) {
+        String qq = getHtml("data/MoscowMetro.html");
+        Document test = Jsoup.parse(qq);
+        for(var q : test.select("#metrodata")) {
+            System.out.println(q.text());
+        }
+
+    }
 }
