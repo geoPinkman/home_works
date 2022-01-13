@@ -14,7 +14,9 @@ public class Main {
     public static void main(String[] args) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        String json = gson.toJson(Metroo.createMetro(16));
+        Structure moscowMetro = new Structure();
+
+        String json = gson.toJson(moscowMetro.createMetro());
         try{
             FileWriter fw = new FileWriter("result/Metro.JSON");
             fw.write(json);
@@ -24,4 +26,5 @@ public class Main {
             ex.printStackTrace();
         }
     }
+
 }
