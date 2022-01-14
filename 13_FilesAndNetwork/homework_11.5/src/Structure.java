@@ -1,7 +1,7 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import javax.lang.model.util.Elements;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,17 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Structure {
-    private MetroLine metroLine;
-    private List<MetroStation> metroStation;
 
     public Structure() {
     }
-
-    public Structure(MetroLine metroLine, List<MetroStation> metroStation) {
-        this.metroLine = metroLine;
-        this.metroStation = metroStation;
-    }
-
 
     public List<MetroLine> getMetroLine() {
         List<MetroLine> lineList = new ArrayList<>();
@@ -87,11 +79,44 @@ public class Structure {
     }
 
     public static void main(String[] args) {
-        String qq = getHtml("data/MoscowMetro.html");
-        Document test = Jsoup.parse(qq);
-        for(var q : test.select("#metrodata")) {
-            System.out.println(q.text());
-        }
+//        String website = "https://www.moscowmap.ru";
+//        String qq = getHtml("data/MoscowMetro.html");
+//        Document test = Jsoup.parse(qq);
+//        Document tTest = null;
+//        for(var q : test.select("#metrodata > div > div > p > a")) {
+//            //System.out.println(q.select("div > div.js-toggle-depend > span"));
+//            System.out.println(website + q.attr("href"));
+//            try{
+//                tTest = Jsoup.connect(website + q.attr("href")).get();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//            for(var aa : tTest.select("body > div.b-global-wrapper.s-overlay-disable > div.b-vd-content > div.t-content-2column > div.t-content-2column-main > div:nth-child(5) > div > div")) {
+//                System.out.println(aa);
+//            }
+//        }
 
+        File lineDir = new File("data/lines");
+
+        for(File htmlFile : lineDir.listFiles()) {
+            System.out.println(htmlFile.getName());
+            if (!htmlFile.isHidden()) {
+                Document doc = Jsoup.parse(getHtml("data/lines/" + htmlFile.getName()));
+                for(var qq : doc.select("body > div.b-global-wrapper.s-overlay-disable > div.b-vd-content > " +
+                        "div.t-content-2column > div.t-content-2column-main > div:nth-child(5) > " +
+                        "div > div > p > a")){
+                    String[] toCorrect = qq.text().split("\\.");
+                    int index = Integer.parseInt(toCorrect[0].strip());
+                    String [] test = (index + "" + qq.select("span.t-icon-metroln")).split("<span ");
+                    String result = "";
+                    for (String s : test) {
+                        result += s;
+                    }
+                    System.out.println(result.replaceAll("\n", "")
+                            .replaceAll("class=\"t-icon-metroln", "")
+                            .replaceAll("\"></span>", ""));
+                }
+            }
+        }
     }
 }
