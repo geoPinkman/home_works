@@ -6,6 +6,8 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import java.util.List;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -14,10 +16,14 @@ public class Main {
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
 
         Session session = sessionFactory.openSession();
-        Courses courses;
+        Course course;
         for (int i  = 1; i <= 45; i++) {
-            courses = session.load(Courses.class, i);
-            System.out.println(i + " - " + courses.getName() + " - " + courses.getStudentsCount());
+            course = session.get(Course.class, i);
+            System.out.println(i + " - course name: " + course.getName() + " - " + course.getStudentsCount() + " students, teacher name is " + course.getTeacher().getName());
+            List<Student> students = course.getStudents();
+            for (Student student : students) {
+                System.out.println(student.getName() + " - " + student.getRegistrationDate());
+            }
         }
 
         session.clear();
