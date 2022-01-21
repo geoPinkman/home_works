@@ -15,7 +15,13 @@ public class Main {
         Metadata metadata = new MetadataSources(registry).getMetadataBuilder().build();
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
 
-        Session session = sessionFactory.openSession();
+        HomeTask2(sessionFactory.openSession());
+        HomeTask1(sessionFactory.openSession());
+
+        sessionFactory.close();
+    }
+
+    public static void HomeTask1(Session session) {
         Course course;
         for (int i  = 1; i <= 45; i++) {
             course = session.get(Course.class, i);
@@ -28,6 +34,13 @@ public class Main {
 
         session.clear();
         session.close();
-        sessionFactory.close();
+    }
+
+    public static void HomeTask2(Session session) {
+        PurchaseList list = session.get(PurchaseList.class, 1);
+        System.out.println(list.getCourseName() + " " + list.getPrice());
+
+        session.clear();
+        session.close();
     }
 }
