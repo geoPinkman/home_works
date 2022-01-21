@@ -1,20 +1,22 @@
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 @Entity
 @Table(name = "Subscriptions")
 public class Subscription {
-
-    private int studentId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Student student;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int courseId;
+    @Column(name = "subscription_date")
     private Date subscriptionDate;
 
-    public int getStudentId() {
-        return studentId;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     public int getCourseId() {
