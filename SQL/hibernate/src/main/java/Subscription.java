@@ -1,15 +1,27 @@
 import javax.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table(name = "Subscriptions")
 public class Subscription {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @EmbeddedId
+    private Key key;
+    @ManyToOne
+    @JoinColumn(name = "student_id", insertable = false, updatable = false)
     private Student student;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int courseId;
+    @ManyToOne
+    @JoinColumn(name = "course_id",insertable = false, updatable = false)
+    private Course course;
     @Column(name = "subscription_date")
     private Date subscriptionDate;
+
+    public Key getKey() {
+        return key;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
+    }
 
     public Student getStudent() {
         return student;
@@ -19,12 +31,12 @@ public class Subscription {
         this.student = student;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     public Date getSubscriptionDate() {
@@ -35,3 +47,4 @@ public class Subscription {
         this.subscriptionDate = subscriptionDate;
     }
 }
+
