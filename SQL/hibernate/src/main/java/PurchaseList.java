@@ -59,4 +59,15 @@ public class PurchaseList {
     public void setCount(int count) {
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        return "PurchaseList{" +
+                "studentName='" + studentName + '\'' +
+                ", courseName='" + courseName + '\'' +
+                ", price=" + price +
+                ", subscriptionDate=" + subscriptionDate +
+                ", count=" + count +
+                '}';
+    }
 }

@@ -16,11 +16,11 @@ public class Course {
     @Column(columnDefinition = "enum")
     private CoursesType type;
     private String description;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Teacher teacher;
     @Column(name = "students_count")
-    private int studentsCount;
-    private int price;
+    private Integer studentsCount;
+    private Integer price;
     @Column(name = "price_per_hour")
     private float pricePerHour;
     @ManyToMany(cascade = CascadeType.ALL)
