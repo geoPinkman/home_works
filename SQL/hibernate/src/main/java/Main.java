@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,18 +28,35 @@ public class Main {
 
         Session session = sessionFactory.openSession();
         Transaction ts = session.beginTransaction();
-        String hql = "from Course course";
-        List<Course> courses = session.createQuery(hql).getResultList();
-        System.out.println(courses.size());
+//        String hql = "from Course course";
+//        List<Course> courses = session.createQuery(hql).getResultList();
+//        System.out.println(courses.size());
+//
+//        for(Course course : courses) {
+//            List<Student> students = course.getStudents();
+//            for (Student student : students) {
+//                LinkedPurchaseList list = new LinkedPurchaseList();
+//                list.setKey(new Key(student.getId(), course.getId()));
+//                session.save(list);
+//            }
+//        }
+//
+        String hql = "from PurchaseList";
+        List<PurchaseList> list = session.createQuery(hql).getResultList();
 
-        for(Course course : courses) {
-            List<Student> students = course.getStudents();
-            for (Student student : students) {
-                LinkedPurchaseList list = new LinkedPurchaseList();
-                list.setKey(new Key(student.getId(), course.getId()));
-                session.save(list);
-            }
+        for (PurchaseList qq : list) {
+            LinkedPurchaseList link = new LinkedPurchaseList();
+
+            Query query = session.createQuery("from Student where name = :studentName");
+            query.setParameter("studentName", qq.getStudentName());
+
+            Query query1 = session.createQuery("from Course where name = :courseName");
+            query1.setParameter("courseName", qq.getCourseName());
+
+            link.setKey(new Key(((Student) query.getSingleResult()).getId(), ((Course) query1.getSingleResult()).getId()));
+            session.save(link);
         }
+
         ts.commit();
         session.clear();
         session.close();

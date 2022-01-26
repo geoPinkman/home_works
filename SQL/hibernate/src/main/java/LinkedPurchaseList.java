@@ -17,6 +17,11 @@ public class LinkedPurchaseList {
         this.key = key;
     }
 
+    public LinkedPurchaseList(int studentId, int courseId) {
+        this.studentId = studentId;
+        this.courseId = courseId;
+    }
+
     public Key getKey() {
         return key;
     }
