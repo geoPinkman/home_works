@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Arrays;
 
 public class Main {
-    public static final int NEW_WIDTH = 300;
+    public static final int NEW_WIDTH = 400;
 
     public static void main(String[] args) {
         String srcFolder = "/users/pigeon/Desktop/src";
