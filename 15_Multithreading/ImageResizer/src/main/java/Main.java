@@ -1,9 +1,8 @@
 package main.java;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static final int NEW_WIDTH = 400;
@@ -13,23 +12,43 @@ public class Main {
         String dstFolder = "/users/pigeon/Desktop/dst";
 
         File srcDir = new File(srcFolder);
-
         File[] files = srcDir.listFiles();
-        try {
-            int middle = files.length / 2;
-            File[] files1 = new File[middle];
-            File[] files2 = new File[files.length - middle];
 
-            System.arraycopy(files, 0, files1, 0, files1.length);
-            System.arraycopy(files, files1.length, files2, 0, files2.length);
-
-            Resizer resizer1 = new Resizer(files1, NEW_WIDTH, dstFolder);
-            resizer1.run();
-            Resizer resizer2 = new Resizer(files2, NEW_WIDTH, dstFolder);
-            resizer2.run();
-        } catch (NullPointerException ex) {
-            ex.printStackTrace();
+        List<File[]> test = filesList(3, files);
+        for (File[] qq : test) {
+            try {
+                new Resizer(qq, NEW_WIDTH, dstFolder).run();
+                System.out.println(qq.length);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
+    }
 
+    public static List<File[]> filesList (int coresCount, File[] files) {
+        coresCount = Math.abs(coresCount);
+        if (coresCount == 0) {
+            coresCount = 1;
+        }
+        if (coresCount > files.length) {
+            coresCount = files.length;
+        }
+        List<File[]> result = new ArrayList<>();
+        int bandPoint = files.length / coresCount;
+        int firstBlock = files.length % coresCount;
+        File[] partOfList;
+        for (int i = 0; i < coresCount; i++) {
+            partOfList = new File[bandPoint + firstBlock];
+            firstBlock = 0;
+            int startPoint;
+            if (i == 0) {
+                startPoint = 0;
+            } else {
+                startPoint = files.length - partOfList.length * (coresCount - i);
+            }
+            System.arraycopy(files, startPoint, partOfList, 0, partOfList.length);
+            result.add(partOfList);
+        }
+        return result;
     }
 }

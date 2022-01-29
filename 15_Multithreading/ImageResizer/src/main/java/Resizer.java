@@ -31,15 +31,6 @@ public class Resizer implements Runnable {
 
                 int newHeight = (int) Math.round(image.getHeight() / (image.getWidth() / (double) newWidth));
                 BufferedImage newImage = Scalr.resize(image, newWidth, newHeight);
-//                int widthStep = image.getWidth() / newWidth;
-//                int heightStep = image.getHeight() / newHeight;
-//
-//                for (int x = 0; x < newWidth; x++) {
-//                    for (int y = 0; y < newHeight; y++) {
-//                        int rgb = image.getRGB(x * widthStep, y * heightStep);
-//                        newImage.setRGB(x, y, rgb);
-//                    }
-//                }
                 File newFile = new File(dstFolder + "/" + file.getName());
                 ImageIO.write(newImage, "jpg", newFile);
             }
