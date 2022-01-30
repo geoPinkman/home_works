@@ -1,8 +1,11 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class SelfSecurity implements Runnable {
-    public static final long WARNING_AMOUNT = 50_000l;
+    public static final long WARNING_AMOUNT = 50_000;
     private long amount;
-    private Account account1;
-    private Account account2;
+    private volatile Account account1;
+    private volatile Account account2;
 
     public SelfSecurity(long amount, Account account1, Account account2) {
         this.amount = amount;
@@ -34,8 +37,6 @@ public class SelfSecurity implements Runnable {
             account2.setFrozen(true);
             account2.setMoney(account2Money);
             System.out.println(";(");
-            return;
         }
-        System.out.println("все ок!");
     }
 }

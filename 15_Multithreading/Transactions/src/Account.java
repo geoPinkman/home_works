@@ -1,6 +1,6 @@
 public class Account {
 
-    private volatile long money;
+    private long money;
     private String accNumber;
     private boolean frozen;
 

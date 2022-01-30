@@ -5,10 +5,10 @@ import java.util.Random;
 public class Bank {
 
     private Map<String, Account> accounts;
-    //private final Random random = new Random();
 
-
-
+    public Bank() {
+        this.accounts = new HashMap<>();
+    }
     /**
      * TODO: реализовать метод. Метод переводит деньги между счетами. Если сумма транзакции > 50000,
      * то после совершения транзакции, она отправляется на проверку Службе Безопасности – вызывается
@@ -16,32 +16,29 @@ public class Bank {
      * усмотрение)
      */
     public void transfer(String fromAccountNum, String toAccountNum, long amount) {
-
         Account source = accounts.get(fromAccountNum);
         Account recipient = accounts.get(toAccountNum);
+        System.out.println("перевод " + amount + " от " + source.getAccNumber() + " к " + recipient.getAccNumber());
         SelfSecurity ss = new SelfSecurity(amount, source, recipient);
         ss.run();
         if (amount < 0) {
-            return;
+            System.out.println("ошибка ввода данных");
         } else if (source.isFrozen()) {
             System.out.println("аккаунт отправителя заблокирован");
-            return;
+
         } else if (recipient.isFrozen()) {
             System.out.println("аккаунт получателя заблокирован");
-            return;
+
         } else if (source.getMoney() < amount) {
             System.out.println("на счету отправителя недостаточно средств");
-            return;
+
         } else {
             long resultSrc = source.getMoney() - amount;
             long resultRec = recipient.getMoney() + amount;
             source.setMoney(resultSrc);
             recipient.setMoney(resultRec);
+            System.out.println("все ок!");
         }
-
-
-
-
     }
 
     /**
@@ -55,9 +52,6 @@ public class Bank {
         return 0;
     }
 
-    public Bank() {
-        this.accounts = new HashMap<>();
-    }
 
     public void addClients(Account account) {
         accounts.put(account.getAccNumber(), account);
@@ -67,7 +61,7 @@ public class Bank {
 
         Bank testBank = new Bank();
 
-        Account test1 = new Account(100000, "0101");
+        Account test1 = new Account(38000, "0101");
         Account test2 = new Account(100000, "0102");
 
         testBank.addClients(test1);
@@ -75,17 +69,12 @@ public class Bank {
 
         System.out.println(test1);
         System.out.println(test2);
-        testBank.transfer("0101", "0102", 51000);
+        testBank.transfer("0101", "0102", -120);
 
         System.out.println(test1);
         System.out.println(test2);
-        testBank.transfer("0101", "0102", 1000);
+        testBank.transfer("0102", "0101", 50000);
         System.out.println(test1);
         System.out.println(test2);
-
-//        testBank.transfer("0101", "0102", 51000);
-//        System.out.println(test1);
-//        System.out.println(test2);
-
     }
 }
