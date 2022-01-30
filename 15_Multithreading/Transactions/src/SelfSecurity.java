@@ -22,9 +22,9 @@ public class SelfSecurity implements Runnable {
         }
     }
 
-    public void isFrozen(long amount) throws InterruptedException {
+    public synchronized void isFrozen(long amount) throws InterruptedException {
         System.out.println("проверка данных...");
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         if (account1.isFrozen() | account2.isFrozen()) {
             System.out.println("что-то пошло нитак;(");
             return;
