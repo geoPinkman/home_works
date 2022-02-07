@@ -1,13 +1,33 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Bank {
 
     private Map<String, Account> accounts;
+    //private final Random random = new Random();
+
+//    public synchronized boolean isFraud(String fromAccountNum, String toAccountNum, long amount)
+//        throws InterruptedException {
+//        Thread.sleep(1000);
+//        return random.nextBoolean();
+//    }
+
 
     public Bank() {
-        this.accounts = new HashMap<>();
+        this.accounts = new Hashtable<>();
     }
+
+    public Map<String, Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Map<String, Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public void addAccount(Account account) {
+        accounts.put(account.getAccNumber(), account);
+    }
+
     /**
      * TODO: реализовать метод. Метод переводит деньги между счетами. Если сумма транзакции > 50000,
      * то после совершения транзакции, она отправляется на проверку Службе Безопасности – вызывается
@@ -15,29 +35,65 @@ public class Bank {
      * усмотрение)
      */
     public void transfer(String fromAccountNum, String toAccountNum, long amount) {
-        Account source = accounts.get(fromAccountNum);
-        Account recipient = accounts.get(toAccountNum);
-        System.out.println("перевод " + amount + " от " + source.getAccNumber() + " к " + recipient.getAccNumber());
-        SelfSecurity ss = new SelfSecurity(amount, source, recipient);
-        ss.run();
-        if (amount < 0) {
-            System.out.println("ошибка ввода данных");
-        } else if (source.isFrozen()) {
-            System.out.println("аккаунт отправителя заблокирован");
+        if (areAccInSystem(fromAccountNum, toAccountNum)) {
+            System.out.println("ok");
+            if (!isAccFroze(fromAccountNum) & getAccMoney(fromAccountNum) >= amount) {
+                System.out.println(accounts.get(fromAccountNum).getAccNumber() + " ok");
+                if (amount >= 50) {
+                    Thread sc = new Thread(new Secure(accounts.get(fromAccountNum), accounts.get(toAccountNum)));
+                    sc.start();
+                    try {
+                        sc.join();
+                        return;
+                    } catch (InterruptedException e) {
+                        e.getStackTrace();
+                    }
+                } else if (!isAccFroze(toAccountNum)) {
+                    System.out.println(accounts.get(toAccountNum).getAccNumber() + " ok");
+                    synchronized (accounts.get(fromAccountNum).compareTo(accounts.get(toAccountNum)) > 0 ? this : accounts.get(toAccountNum)) {
+                        synchronized (accounts.get(toAccountNum)) {
+                            long result1 = accounts.get(fromAccountNum).getMoney() - amount;
+                            accounts.get(fromAccountNum).setMoney(result1);
+                            long result2 = accounts.get(toAccountNum).getMoney() + amount;
+                            accounts.get(toAccountNum).setMoney(result2);
+                        }
+                    }
 
-        } else if (recipient.isFrozen()) {
-            System.out.println("аккаунт получателя заблокирован");
-
-        } else if (source.getMoney() < amount) {
-            System.out.println("на счету отправителя недостаточно средств");
-
+                } else {
+                    System.out.println("some wrong with " + accounts.get(toAccountNum).getAccNumber());
+                }
+            } else {
+                System.out.println("some wrong with " + accounts.get(fromAccountNum).getAccNumber());
+            }
         } else {
-            long resultSrc = source.getMoney() - amount;
-            long resultRec = recipient.getMoney() + amount;
-            source.setMoney(resultSrc);
-            recipient.setMoney(resultRec);
-            System.out.println("все ок!");
+            System.out.println("one or more acc not found in system");
         }
+    }
+
+    private int getIntCodeToCompare(String fromAccountNum, String toAccountNum) {
+        int result = 0;
+        if (accounts.containsKey(fromAccountNum) & accounts.containsKey(toAccountNum)) {
+            result = 1;
+        }
+        if(accounts.containsKey(fromAccountNum) & !accounts.containsKey(toAccountNum)
+                | !accounts.containsKey(fromAccountNum) & accounts.containsKey(toAccountNum)
+                | !accounts.containsKey(fromAccountNum) & !accounts.containsKey(toAccountNum)) {
+            result = -1;
+        }
+        return result;
+    }
+    private boolean areAccInSystem(String fromAccountNum, String toAccountNum) {
+        return getIntCodeToCompare(fromAccountNum, toAccountNum) == 1;
+    }
+
+
+
+    private boolean isAccFroze(String acc) {
+        return accounts.get(acc).isFreeze();
+    }
+
+    private long getAccMoney(String acc) {
+        return accounts.get(acc).getMoney();
     }
 
     /**
@@ -48,32 +104,6 @@ public class Bank {
     }
 
     public long getSumAllAccounts() {
-        return 0;
-    }
-
-
-    public void addClients(Account account) {
-        accounts.put(account.getAccNumber(), account);
-    }
-
-    public static void main(String[] args) {
-
-        Bank testBank = new Bank();
-
-        Account test1 = new Account(38000, "0101");
-        Account test2 = new Account(100000, "0102");
-
-        testBank.addClients(test1);
-        testBank.addClients(test2);
-
-        System.out.println(test1);
-        System.out.println(test2);
-        testBank.transfer("0101", "0102", -120);
-
-        System.out.println(test1);
-        System.out.println(test2);
-        testBank.transfer("0102", "0101", 50000);
-        System.out.println(test1);
-        System.out.println(test2);
+        return accounts.values().stream().mapToLong(Account::getMoney).sum();
     }
 }

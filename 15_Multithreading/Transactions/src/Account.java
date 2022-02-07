@@ -1,13 +1,14 @@
-public class Account {
+public class Account implements Comparable<Account> {
 
     private long money;
     private String accNumber;
-    private boolean frozen;
+    private boolean isFreeze;
+
 
     public Account(long money, String accNumber) {
         this.money = money;
         this.accNumber = accNumber;
-        this.frozen = false;
+        this.isFreeze = false;
     }
 
     public long getMoney() {
@@ -26,22 +27,16 @@ public class Account {
         this.accNumber = accNumber;
     }
 
-    public boolean isFrozen() {
-        return frozen;
+    public boolean isFreeze() {
+        return isFreeze;
     }
 
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
+    public void setFreeze(boolean freeze) {
+        isFreeze = freeze;
     }
 
     @Override
-    public String toString() {
-        return "Account{" +
-                "money=" + money +
-                ", accNumber='" + accNumber + '\'' +
-                ", frozen=" + frozen +
-                '}';
+    public int compareTo(Account o) {
+        return this.getAccNumber().compareTo(o.accNumber);
     }
-
-
 }
