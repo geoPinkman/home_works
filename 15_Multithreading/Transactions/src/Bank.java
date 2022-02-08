@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Bank {
 
-    private Map<String, Account> accounts;
+    private Map<Integer, Account> accounts;
     //private final Random random = new Random();
 
 //    public synchronized boolean isFraud(String fromAccountNum, String toAccountNum, long amount)
@@ -16,11 +16,11 @@ public class Bank {
         this.accounts = new Hashtable<>();
     }
 
-    public Map<String, Account> getAccounts() {
+    public Map<Integer, Account> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(Map<String, Account> accounts) {
+    public void setAccounts(Map<Integer, Account> accounts) {
         this.accounts = accounts;
     }
 
@@ -34,30 +34,32 @@ public class Bank {
      * метод isFraud. Если возвращается true, то делается блокировка счетов (как – на ваше
      * усмотрение)
      */
-    public void transfer(String fromAccountNum, String toAccountNum, long amount) {
+    public void transfer(int fromAccountNum, int toAccountNum, long amount) {
+        Thread sc = new Thread(new Secure(accounts.get(fromAccountNum), accounts.get(toAccountNum), amount));
+        sc.start();
+
         if (areAccInSystem(fromAccountNum, toAccountNum)) {
             System.out.println("ok");
             if (!isAccFroze(fromAccountNum) & getAccMoney(fromAccountNum) >= amount) {
                 System.out.println(accounts.get(fromAccountNum).getAccNumber() + " ok");
-                if (amount >= 50) {
-                    Thread sc = new Thread(new Secure(accounts.get(fromAccountNum), accounts.get(toAccountNum)));
-                    sc.start();
-                    try {
-                        sc.join();
-                        return;
-                    } catch (InterruptedException e) {
-                        e.getStackTrace();
-                    }
-                } else if (!isAccFroze(toAccountNum)) {
-                    System.out.println(accounts.get(toAccountNum).getAccNumber() + " ok");
-                    synchronized (accounts.get(fromAccountNum).compareTo(accounts.get(toAccountNum)) > 0 ? this : accounts.get(toAccountNum)) {
-                        synchronized (accounts.get(toAccountNum)) {
-                            long result1 = accounts.get(fromAccountNum).getMoney() - amount;
-                            accounts.get(fromAccountNum).setMoney(result1);
-                            long result2 = accounts.get(toAccountNum).getMoney() + amount;
-                            accounts.get(toAccountNum).setMoney(result2);
+                    if (!isAccFroze(toAccountNum)) {
+                        System.out.println(accounts.get(toAccountNum).getAccNumber() + " ok");
+                        if (amount < 50) {
+                            synchronized (accounts.get(fromAccountNum).compareTo(accounts.get(toAccountNum)) > 0 ? this : accounts.get(toAccountNum)) {
+                                synchronized (accounts.get(toAccountNum).compareTo(accounts.get(fromAccountNum)) < 0 ? this : accounts.get(fromAccountNum)) {
+                                    long result1 = accounts.get(fromAccountNum).getMoney() - amount;
+                                    accounts.get(fromAccountNum).setMoney(result1);
+                                    long result2 = accounts.get(toAccountNum).getMoney() + amount;
+                                    accounts.get(toAccountNum).setMoney(result2);
+                                }
+                            }
+                        } else {
+                            try {
+                                sc.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
 
                 } else {
                     System.out.println("some wrong with " + accounts.get(toAccountNum).getAccNumber());
@@ -70,7 +72,7 @@ public class Bank {
         }
     }
 
-    private int getIntCodeToCompare(String fromAccountNum, String toAccountNum) {
+    private int getIntCodeToCompare(int fromAccountNum, int toAccountNum) {
         int result = 0;
         if (accounts.containsKey(fromAccountNum) & accounts.containsKey(toAccountNum)) {
             result = 1;
@@ -82,18 +84,18 @@ public class Bank {
         }
         return result;
     }
-    private boolean areAccInSystem(String fromAccountNum, String toAccountNum) {
+    private boolean areAccInSystem(int fromAccountNum, int toAccountNum) {
         return getIntCodeToCompare(fromAccountNum, toAccountNum) == 1;
     }
 
 
 
-    private boolean isAccFroze(String acc) {
-        return accounts.get(acc).isFreeze();
+    private boolean isAccFroze(int accNumber) {
+        return accounts.get(accNumber).isFreeze();
     }
 
-    private long getAccMoney(String acc) {
-        return accounts.get(acc).getMoney();
+    private long getAccMoney(int accNumber) {
+        return accounts.get(accNumber).getMoney();
     }
 
     /**

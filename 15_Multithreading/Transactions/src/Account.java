@@ -1,11 +1,11 @@
 public class Account implements Comparable<Account> {
 
     private long money;
-    private String accNumber;
+    private int accNumber;
     private boolean isFreeze;
 
 
-    public Account(long money, String accNumber) {
+    public Account(long money, int accNumber) {
         this.money = money;
         this.accNumber = accNumber;
         this.isFreeze = false;
@@ -19,11 +19,11 @@ public class Account implements Comparable<Account> {
         this.money = money;
     }
 
-    public String getAccNumber() {
+    public int getAccNumber() {
         return accNumber;
     }
 
-    public void setAccNumber(String accNumber) {
+    public void setAccNumber(int accNumber) {
         this.accNumber = accNumber;
     }
 
@@ -37,6 +37,15 @@ public class Account implements Comparable<Account> {
 
     @Override
     public int compareTo(Account o) {
-        return this.getAccNumber().compareTo(o.accNumber);
+        if (this.accNumber < o.accNumber) {
+            return 1;
+        }
+        if (this.accNumber > o.accNumber) {
+            return -1;
+        }
+        else {
+            return 0;
+        }
+
     }
 }

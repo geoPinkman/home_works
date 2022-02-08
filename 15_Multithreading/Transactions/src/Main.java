@@ -2,9 +2,9 @@ public class Main {
     public static void main(String[] args) {
         Bank alfa = new Bank();
 
-        Account acc1 = new Account(1000, "0101");
-        Account acc2 = new Account(1200, "0102");
-        Account acc3 = new Account(1100, "0103");
+        Account acc1 = new Account(1000, 0101);
+        Account acc2 = new Account(1200, 0102);
+        Account acc3 = new Account(1100, 0103);
 
         alfa.addAccount(acc1);
         alfa.addAccount(acc2);
@@ -14,6 +14,8 @@ public class Main {
 
         for (int i = 0; i < 101; i++) {
             long am = 10;
+            if (i == 90)
+            {am = 50;}
             alfa.transfer(acc1.getAccNumber(), acc2.getAccNumber(), am);
             alfa.transfer(acc2.getAccNumber(), acc1.getAccNumber(), 15);
             //alfa.transfer(acc2.getAccNumber(), acc3.getAccNumber(), am);
