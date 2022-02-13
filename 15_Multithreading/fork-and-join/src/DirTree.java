@@ -12,11 +12,10 @@ public class DirTree extends RecursiveAction {
 
     @Override
     protected void compute() {
-        System.out.print("\t");
         parse.print();
 
         List<DirTree> tasksList = new ArrayList<>();
-        for (Map.Entry<String, List<String>> qq : parse.getSiteMap().entrySet()) {
+        for (Map.Entry<String, List<String>> qq : parse.getResult().entrySet()) {
             DirTree dirTree = new DirTree((Parse) qq);
             dirTree.fork();
             tasksList.add(dirTree);
