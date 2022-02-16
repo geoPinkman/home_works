@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 @RestController
 public class TaskController {
@@ -25,11 +27,11 @@ public class TaskController {
     }
 
     @GetMapping("/tasks/")
-    public ResponseEntity<Iterable<Task>> readAll() {
-        final Iterable<Task> tasks = todoService.readAll();
-        return tasks != null
-                ? new ResponseEntity<>(tasks, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<List<Task>> readAll() {
+        Iterable<Task> tasks = todoService.readAll();
+        List<Task> result = new ArrayList<>();
+        tasks.forEach(result::add);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @GetMapping("/tasks/{id}")
     public ResponseEntity<Task> read(@PathVariable(name = "id") int id) {

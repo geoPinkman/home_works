@@ -4,12 +4,15 @@ import app.model.Task;
 import app.model.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class TodoServiceImp implements TodoService {
 
-    private TaskRepo taskRepo;
+    private final TaskRepo taskRepo;
     private static final AtomicInteger taskId = new AtomicInteger();
 
     @Autowired
@@ -25,8 +28,11 @@ public class TodoServiceImp implements TodoService {
     }
 
     @Override
-    public Iterable<Task> readAll() {
-       return taskRepo.findAll();
+    public List<Task> readAll() {
+        Iterable<Task> iterable = taskRepo.findAll();
+        List<Task> result = new ArrayList<>();
+        iterable.forEach(result::add);
+        return result;
     }
 
     @Override

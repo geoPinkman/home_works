@@ -26,4 +26,9 @@ public class Task {
     public void setToDoTask(String toDoTask) {
         this.toDoTask = toDoTask;
     }
+
+    @Override
+    public String toString() {
+        return getToDoTask();
+    }
 }
