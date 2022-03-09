@@ -12,7 +12,10 @@ public class DBConnector {
         MongoClient client = new MongoClient("127.0.0.1");
         return client.getDatabase(name)
                .withCodecRegistry(CodecRegistries
-                        .fromProviders(PojoCodecProvider.builder().register(Merch.class, Product.class, BsonDocument.class).build(), new Jsr310CodecProvider(), new ValueCodecProvider()));
+                        .fromProviders(PojoCodecProvider
+                                .builder()
+                                .register(Merch.class, Product.class, Shop.class)
+                                .build(), new Jsr310CodecProvider(), new ValueCodecProvider()));
     }
 
 }
