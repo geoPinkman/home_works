@@ -1,3 +1,6 @@
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 import javax.naming.PartialResultException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -5,21 +8,53 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class Test {
+//
+//    private static MongoDatabase mongoDB = DBConnector.getInstance("dwarf-trader");
+//
+//    private static MongoCollection<Shop> shopList = mongoDB.getCollection("shops", Shop.class);
+//    private static MongoCollection<Merch> netList = mongoDB.getCollection("products", Merch.class);
+//    private static MongoCollection<Product> products = mongoDB.getCollection("storage", Product.class);
+//    public static void printList(String kind) {
+//        if (kind.equals("storage")) {
+//            products.find().forEach((Consumer<Product>) p -> System.out.println(p.getName()));
+//        }
+//        if (kind.equals("shops")) {
+//            shopList.find().forEach((Consumer<Shop>) p -> System.out.println(p.getName()));
+//        }
+//        if (kind.equals("net")) {
+//            netList.find().forEach((Consumer<Merch>) p -> System.out.println(p.getProductName() + " "
+//            + p.getCost() + " in " + p.getGroceryName()));
+//        }
+//        else {
+//            System.out.println("no data's");
+//        }
+//
+//    }
+//    public static void main(String[] args) {
+//        products.insertOne(new Product("lance"));
+//        products.insertOne(new Product("breaker"));
+//        printList("shop");
+//
+//
 
-    public static void main(String[] args) {
-        try {
-            File file = new File("/Users/pigeon/Documents/skillbox/java_basics/17_NoSQL/Shop/src/main/resources/commands.txt");
-            FileReader fileReader = new FileReader(file);
-            BufferedReader reader = new BufferedReader(fileReader);
-            while (reader.ready()) {
-                System.out.println(reader.readLine());
-            }
-            }
-         catch (Exception ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            File file = new File("/Users/pigeon/Documents/skillbox/java_basics/17_NoSQL/Shop/src/main/resources/commands.txt");
+//            FileReader fileReader = new FileReader(file);
+//            BufferedReader reader = new BufferedReader(fileReader);
+//            while (reader.ready()) {
+//                System.out.println(reader.readLine());
+//            }
+//            }
+//         catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+
+
+
+
 
 //        Scanner scanner = new Scanner(System.in);
 //        String test = scanner.nextLine();
@@ -100,7 +135,7 @@ public class Test {
 ////        collection.insertMany(myNet);
 ////        collection.aggregate(List.of(Aggregates.group("$productName", Accumulators.max("cost", 2))));
 
-    }
+   // }
 
 
 }

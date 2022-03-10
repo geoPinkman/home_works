@@ -1,19 +1,13 @@
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Accumulators;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.BsonField;
-import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.*;
 import org.bson.conversions.Bson;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class Main {
@@ -23,21 +17,79 @@ public class Main {
     public static void addMerch(String product, String shop, int cost) {
         myNet.add(new Merch(product, shop, cost));
     }
-    private static MongoDatabase mongoDB = DBConnector.getInstance("dwarf-trader");
+    private final static MongoDatabase mongoDB = DBConnector.getInstance("dwarf-trader");
 
-    private static MongoCollection<Shop> shopList = mongoDB.getCollection("shops", Shop.class);
-    private static MongoCollection<Merch> netList = mongoDB.getCollection("products", Merch.class);
-    private static MongoCollection<Product> products = mongoDB.getCollection("storage", Product.class);
+    private final static MongoCollection<Shop> shopList = mongoDB.getCollection("shops", Shop.class);
+    private final static MongoCollection<Merch> netList = mongoDB.getCollection("products", Merch.class);
+    private final static MongoCollection<Product> products = mongoDB.getCollection("storage", Product.class);
+
+    public static void printList(String kind) {
+        if (kind.equals("storage")) {
+            products.find().forEach((Consumer<Product>) p -> System.out.println(p.getName()));
+        }
+        if (kind.equals("shops")) {
+            shopList.find().forEach((Consumer<Shop>) p -> System.out.println(p.getName()));
+        }
+        if (kind.equals("net")) {
+            netList.find().forEach((Consumer<Merch>) p -> System.out.println(p.getProductName() + " "
+                    + p.getCost() + " golds in " + p.getGroceryName()));
+        }
+        else if (kind.isEmpty()){
+            System.out.println("no data's");
+        }
+    }
+
+    public static void printProductList(String product) {
+        Bson filter = Filters.eq("productName", product);
+        System.out.println(product + ":");
+        netList.aggregate(Collections.singletonList(Aggregates.match(filter))).forEach((Consumer<Merch>) p ->
+                System.out.println(p.getCost() + " golds in " + p.getGroceryName()));
+        sumOfCost(filter);
+    }
+
+    public static void printShopList(String shop) {
+        Bson filter = Filters.eq("groceryName", shop);
+        System.out.println(shop + ":");
+        netList.aggregate(Collections.singletonList(Aggregates.match(filter))).forEach((Consumer<Merch>) p ->
+                System.out.println(p.getProductName() + " - " + p.getCost() + " golds"));
+        sumOfCost(filter);
+    }
+
+    public static void sumOfCost(Bson filter) {
+        AtomicInteger result = new AtomicInteger();
+        AtomicInteger count = new AtomicInteger(0);
+        netList.aggregate(Collections.singletonList(Aggregates.match(filter))).forEach((Consumer<Merch>) p -> {
+                    result.addAndGet(p.getCost());
+                    count.getAndIncrement();
+                });
+        int smallest = netList.find().sort(Sorts.ascending("cost")).first().getCost();
+        int biggest =  netList.find().sort(Sorts.descending("cost")).first().getCost();
+        System.out.println("Total sum: " + result + " golds");
+        System.out.println("Average cost is: " + (double)(result.get() / count.get()) + " golds");
+        System.out.println("Minimal cost is " + smallest + " and maximal - " + biggest + " golds");
+    }
+    public static void moreThen(int price) {
+        Bson filter = Filters.gt("cost", price);
+        System.out.println("list of Products greater then " + price);
+        netList.aggregate(Collections.singletonList(Aggregates.match(filter))).forEach((Consumer<Merch>) p ->
+                System.out.println(p.getProductName() + " " + p.getCost() + " golds in " + p.getGroceryName()));
+    }
+
+    public static void lessThen(int price) {
+        Bson filter = Filters.lt("cost", price);
+        System.out.println("list of Products greater then " + price);
+        netList.aggregate(Collections.singletonList(Aggregates.match(filter))).forEach((Consumer<Merch>) p ->
+                System.out.println(p.getProductName() + " " + p.getCost() + " golds in " + p.getGroceryName()));
+    }
 
     public static void main(String[] args) {
-        mongoDB.drop();
-
+        //mongoDB.drop();
         for(;;) {
-
             Scanner scanner = new Scanner(System.in);
             String scanString = scanner.nextLine();
 
             String[] scanArray = scanString.split(" ", 2);
+
             switch (scanArray[0]) {
                 case ("add_shop"):
                     addShop(scanArray[1]);
@@ -63,15 +115,26 @@ public class Main {
                     }
                     break;
                 case("exit"):
-                    break;
+                    return;
                 case("info"):
-                    System.out.println();
+                    printList(scanArray[1]);
+                    break;
+                case("stat_product"):
+                    printProductList(scanArray[1]);
+                    break;
+                case("stat_shop"):
+                    printShopList(scanArray[1]);
+                    break;
+                case("greater"):
+                    moreThen(Integer.parseInt(scanArray[1]));
+                    break;
+                case("less"):
+                    lessThen(Integer.parseInt(scanArray[1]));
                     break;
                 default:
                     System.out.println("try again");
                     break;
             }
-
         }
     }
 
@@ -106,8 +169,5 @@ public class Main {
         } else {
             System.out.println("shop not found");
         }
-
     }
-
-
 }
