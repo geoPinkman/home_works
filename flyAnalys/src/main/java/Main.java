@@ -14,8 +14,12 @@ public class Main {
 
     public static double getPercentile(List<Double> list, int percentile){
         List<Double> res = list.stream().sorted(Double::compareTo).collect(Collectors.toList());
-        int index = percentile * res.size() / 100;
-        return res.get(index - 1);
+        double someNumber = percentile * res.size() / 100.0;
+        int index = (int) someNumber;
+        if (someNumber - (double) index >= 0.5) {
+            index = index + 1;
+        }
+            return res.get(index - 1);
     }
 
     public static void main(String[] args) throws IOException {
@@ -42,11 +46,10 @@ public class Main {
         for(double time : fullTime) {
             sumAllTimes += time;
         }
-        System.out.println("Среднее время в пути");
+        System.out.print("Среднее время в пути ");
         System.out.printf("%.2f" , sumAllTimes / fullTime.size());
         System.out.println();
-        fullTime.stream().sorted(Double::compareTo).forEach(System.out::println);
-
+        //fullTime.stream().sorted(Double::compareTo).forEach(System.out::println);
         System.out.println("90 - й процентиль : " + getPercentile(fullTime, 90));
     }
 
